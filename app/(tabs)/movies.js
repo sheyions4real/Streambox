@@ -5,8 +5,12 @@ import { Link } from 'expo-router';
 import { fetchTopRatedMovies, fetchTrendingMovies } from '../../utils/api';
 import Carousel from '../components/Carousel';
 import MovieCard from '../components/MovieCard';
+import FullCard from '../components/FullCard';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 export default function MoviesScreen() {
+  const router = useRouter();
   const [topRatedMovies, setTopRatedMovies] = useState([]);
   const [trendingMovies, setTrendingMovies] = useState([]);
 
@@ -25,41 +29,51 @@ export default function MoviesScreen() {
     loadTopRatedMovies();
   }, []);
 
+  
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer}>
-      <Text style={styles.headerText}>Movies</Text>
-      <View style={styles.carouselHeader}>
-         <Text style={styles.title}>Top Rated Movies</Text>
-        <Link href="/search" asChild>
-          <Button
-            mode="contained"
-            style={styles.searchButton}
-            labelStyle={styles.searchButtonLabel}
-          >
-            see more
-          </Button>
-          </Link>
-        </View>
-        <Carousel data={topRatedMovies} renderItem={({ item }) => (
-            <MovieCard movie={item} onPress={() => console.log(item.title)} />
-        )} />
-
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.headerText}>Movies</Text>
         <View style={styles.carouselHeader}>
-         <Text style={styles.title}>Trending Movies</Text>
-        <Link href="/search" asChild>
-          <Button
-            mode="contained"
-            style={styles.searchButton}
-            labelStyle={styles.searchButtonLabel}
-          >
-            see more
-          </Button>
-        </Link>
-      </View>
-      <Carousel data={trendingMovies} renderItem={({ item }) => (
-          <MovieCard movie={item} onPress={() => console.log(item.title)} />
-      )} />
-    </ScrollView>
+            <Text style={styles.title}>Top Rated Movies</Text>
+            <Link href="/search" asChild>
+            <Button
+                mode="contained"
+                style={styles.searchButton}
+                labelStyle={styles.searchButtonLabel}
+            >
+                see more
+            </Button>
+            </Link>
+            </View>
+            <Carousel data={topRatedMovies} renderItem={({ item }) => (
+                <MovieCard movie={item} onPress={() => router.push(`/details/${item.id}?type=movie`)} />
+            )} />
+
+            <View style={styles.fullCardContainer}>
+            <FullCard movie={{ title: 'Breaking Bad', 
+                poster_path: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg', vote_average: 9.5 }} 
+                onPress={() => router.push(`/details/1?type=tv`)} />
+            </View>
+
+
+            <View style={styles.carouselHeader}>
+            <Text style={styles.title}>Trending Movies</Text>
+            <Link href="/search" asChild>
+            <Button
+                mode="contained"
+                style={styles.searchButton}
+                labelStyle={styles.searchButtonLabel}
+            >
+                see more
+            </Button>
+            </Link>
+        </View>
+        <Carousel data={trendingMovies} renderItem={({ item }) => (
+            <MovieCard movie={item} onPress={() => router.push(`/details/${item.id}?type=movie`)} />
+        )} />
+        </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -96,5 +110,11 @@ searchButtonLabel: {
   color: '#ffffff',
   fontSize: 12,
   fontWeight: "bold",
-}
+},
+ fullCardContainer: {
+    marginBottom: 12,
+    width: '100%',
+    alignItems: 'center', // Center the card horizontally
+    justifyContent: 'center', // Center the card vertically
+  },
 });

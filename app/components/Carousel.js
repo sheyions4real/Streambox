@@ -11,7 +11,7 @@ const Carousel = ({data, renderItem}) => {
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToInterval={width * 0.75}
