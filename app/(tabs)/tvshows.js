@@ -7,8 +7,11 @@ import { fetchTopRatedTvShows, fetchTrendingTvShows } from '../../utils/api';
 import Carousel from '../components/Carousel';
 import TVShowCard from '../components/TvShowCard';
 import MovieCard from '../components/MovieCard';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 export default function TVShowsScreen() {
+  const router = useRouter();
   const [topRatedShows, setTopRatedShows] = useState([]);
   const [trendingShows, setTrendingShows] = useState([]);
 
@@ -23,30 +26,32 @@ export default function TVShowsScreen() {
   }, []);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer}>
-      <Text style={styles.headerText}>TV Shows</Text>
-      <View style={styles.carouselHeader}>
-         <Text style={styles.title}>Recommended TV Show</Text>
-      </View>
-      <View style={styles.fullCardContainer}>
-         <FullCard movie={{ title: 'Breaking Bad', 
-            poster_path: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg', vote_average: 9.5 }} 
-            onPress={() => console.log('Breaking Bad')} />
-        </View>
-         <View style={styles.carouselHeader}>
-            <Text style={styles.title}>Trending TV Show</Text>
-            <Carousel data={trendingShows} renderItem={({ item }) => (
-                <MovieCard movie={item} onPress={() => console.log(item.title)} />
-            )} />
-        </View>
-
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.headerText}>TV Shows</Text>
         <View style={styles.carouselHeader}>
-            <Text style={styles.title}>Top Rated TV Show</Text>
-            <Carousel data={topRatedShows} renderItem={({ item }) => (
-                <TVShowCard show={item} onPress={() => console.log(item.title)} />
-            )} />
+            <Text style={styles.title}>Recommended TV Show</Text>
         </View>
-    </ScrollView>
+        <View style={styles.fullCardContainer}>
+            <FullCard movie={{ title: 'Breaking Bad', 
+                poster_path: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg', vote_average: 9.5 }} 
+                onPress={() => router.push(`/details/1?type=tv`)} />
+            </View>
+            <View style={styles.carouselHeader}>
+                <Text style={styles.title}>Trending TV Show</Text>
+                <Carousel data={trendingShows} renderItem={({ item }) => (
+                    <MovieCard movie={item} onPress={() => router.push(`/details/${item.id}?type=tv`)} />
+                )} />
+            </View>
+
+            <View style={styles.carouselHeader}>
+                <Text style={styles.title}>Top Rated TV Show</Text>
+                <Carousel data={topRatedShows} renderItem={({ item }) => (
+                    <TVShowCard show={item} onPress={() => router.push(`/details/${item.id}?type=tv`)} />
+                )} />
+            </View>
+        </ScrollView>
+    </SafeAreaView>
   );
 }
 

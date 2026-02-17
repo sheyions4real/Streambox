@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import  {Text, View, StyleSheet, ScrollView} from 'react-native';
 import { Button } from 'react-native-paper';
 import { Link } from 'expo-router';
@@ -6,12 +7,17 @@ import Carousel from '../components/Carousel';
 import { Dimensions } from 'react-native';
 import MovieCard from '../components/MovieCard';
 import TvShowCard from '../components/TvShowCard';
+import { useRouter } from 'expo-router';
+import FullCard from '../components/FullCard';
+
 
 // import fetchMovies from '../utils/fetchMovies';
 import { fetchPopularMovies, fetchPopularTvShows } from '../../utils/api';
 
 
 function HomeScreen() {
+   const insets = useSafeAreaInsets();
+   const router = useRouter();
 
     const [popularMovies, setPopularMovies] = useState([]);
     const [popularTvShows, setPopularTvShows] = useState([]);
@@ -33,14 +39,15 @@ function HomeScreen() {
 
 
     const renderItem = ({ item }) => (
-        <MovieCard movie={item} onPress={() => console.log(item.title)} />
+        <MovieCard movie={item} onPress={() => router.push(`/details/${item.id}?type=movie`)} />
     );
 
      const rendershowItem = ({ item }) => (
-        <TvShowCard show={item} onPress={() => console.log(item.title)} />
+        <TvShowCard show={item} onPress={() => router.push(`/details/${item.id}?type=tv`)} />
     );
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
     <ScrollView 
         style={styles.container}
         contentContainerStyle={{ alignItems: 'flex-start' }}
@@ -73,7 +80,14 @@ function HomeScreen() {
         </Link>
       </View>
       <Carousel data={popularTvShows} renderItem={rendershowItem} />
+
+      <View style={styles.fullCardContainer}>
+        <FullCard movie={{ title: 'Breaking Bad', 
+           poster_path: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg', vote_average: 9.5 }} 
+           onPress={() => router.push(`/details/1?type=tv`)} />
+      </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -111,7 +125,12 @@ searchButtonLabel: {
   fontSize: 12,
   fontWeight: "bold",
 },
-
+fullCardContainer: {
+    marginBottom: 12,
+    width: '100%',
+    alignItems: 'center', // Center the card horizontally
+    justifyContent: 'center', // Center the card vertically
+  },
 });
 
 export default HomeScreen;
